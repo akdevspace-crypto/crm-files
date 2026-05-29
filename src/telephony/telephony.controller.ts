@@ -142,7 +142,7 @@ export class TelephonyController {
       const twimlResponse = `
 <Response>
     <Dial action="${baseUrl}/exotel/status">
-        <Number>sip:${roomName}@${livekitSipDomain}</Number>
+        <Sip>sip:${roomName}@${livekitSipDomain}</Sip>
     </Dial>
 </Response>`.trim();
       this.logger.log(`[DEBUG] Returning TwiML to Provider: \n${twimlResponse}`);
