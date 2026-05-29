@@ -146,7 +146,7 @@ export class TelephonyService {
 
       // Mark agent as AVAILABLE again
       const agentParticipant = session.participants.find(
-        (p) => p.role === 'AGENT' && p.agentId,
+       (p: any) => p.role === 'AGENT' && p.agentId,
       );
       if (agentParticipant && agentParticipant.agentId) {
         await this.prisma.agent.update({
