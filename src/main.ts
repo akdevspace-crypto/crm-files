@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
-import * as path from 'path';
-dotenv.config({ path: path.resolve(process.cwd(), '../backend/.env') });
+
+dotenv.config();
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -8,39 +8,70 @@ import { AppModule } from './app.module';
 import * as express from 'express';
 import { TelephonyGateway } from './telephony/telephony.gateway';
 
-// Import the refactored legacy express application and initialization hook
+// Import legacy express application
 const legacyModule = require('./legacy/index.js');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.use(express.urlencoded({ extended: true }));
-  app.use(express.json());
-
-  app.enableCors({ origin: '*' });
-
-  app.enableShutdownHooks();
-
-  // Retrieve the underlying Express instance used by NestJS
-  const expressInstance = app.getHttpAdapter().getInstance();
-  
-  // Attach the Legacy Express Routes onto the NestJS Server
-  expressInstance.use(legacyModule.app);
-
-  // Allow NestJS to bind before we pass its WebSocket server
-  const server = await app.listen(4000);
-  console.log(`[Unified Backend] Running on Port 4000`);
-
-  // Retrieve the Socket.IO server initialized by NestJS
   try {
-    const telephonyGateway = app.get(TelephonyGateway);
-    const io = telephonyGateway.server;
+    const app = await NestFactory.create(AppModule);
 
-    // Initialize legacy WebSockets, WebRTC, and Cron Jobs
-    legacyModule.mountLegacyApp(legacyModule.app, io);
-    console.log(`[Legacy Service] successfully mounted and initialized.`);
-  } catch (err) {
-    console.error(`[Legacy Service] failed to initialize.`, err);
+    app.use(express.urlencoded({ extended: true }));
+    app.use(express.json());
+
+    app.enableCors({
+      origin: '*',
+      credentials: true,
+    });
+
+    app.enableShutdownHooks();
+
+    // Get underlying Express instance
+    const expressInstance = app.getHttpAdapter().getInstance();
+
+    // Mount legacy Express routes
+    expressInstance.use(legacyModule.app);
+
+    // Render provides PORT automatically
+    const port = Number(process.env.PORT) || 4000;
+
+    // Important for Render
+    await app.listen(port, '0.0.0.0');
+
+    console.log(`🚀 Unified Backend running on port ${port}`);
+
+    // Initialize Socket.IO / Telephony Gateway
+    try {
+      const telephonyGateway = app.get(TelephonyGateway);
+
+      if (telephonyGateway?.server) {
+        const io = telephonyGateway.server;
+
+        legacyModule.mountLegacyApp(
+          legacyModule.app,
+          io,
+        );
+
+        console.log(
+          '✅ Legacy Service successfully mounted and initialized.',
+        );
+      } else {
+        console.warn(
+          '⚠️ TelephonyGateway server not available.',
+        );
+      }
+    } catch (err) {
+      console.error(
+        '❌ Legacy Service failed to initialize:',
+        err,
+      );
+    }
+  } catch (error) {
+    console.error(
+      '❌ Application bootstrap failed:',
+      error,
+    );
+    process.exit(1);
   }
 }
+
 bootstrap();
