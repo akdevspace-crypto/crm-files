@@ -4,7 +4,6 @@ dotenv.config();
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
 import * as express from 'express';
 import { TelephonyGateway } from './telephony/telephony.gateway';
 
@@ -15,11 +14,13 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
+    // Middleware
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
 
+    // CORS
     app.enableCors({
-      origin: '*',
+      origin: true,
       credentials: true,
     });
 
@@ -28,41 +29,46 @@ async function bootstrap() {
     // Get underlying Express instance
     const expressInstance = app.getHttpAdapter().getInstance();
 
-    // Mount legacy Express routes
-    expressInstance.use(legacyModule.app);
+    // Mount legacy routes
+    if (legacyModule?.app) {
+      expressInstance.use(legacyModule.app);
+      console.log('✅ Legacy Express routes mounted');
+    }
 
     // Render provides PORT automatically
-    const port = Number(process.env.PORT) || 4000;
+    const port = parseInt(process.env.PORT || '4000', 10);
 
-    // Important for Render
+    // Important for Render/Docker deployments
     await app.listen(port, '0.0.0.0');
 
     console.log(`🚀 Unified Backend running on port ${port}`);
 
-    // Initialize Socket.IO / Telephony Gateway
+    // Initialize Socket.IO integrations
     try {
       const telephonyGateway = app.get(TelephonyGateway);
 
       if (telephonyGateway?.server) {
         const io = telephonyGateway.server;
 
-        legacyModule.mountLegacyApp(
-          legacyModule.app,
-          io,
-        );
+        if (legacyModule?.mountLegacyApp) {
+          legacyModule.mountLegacyApp(
+            legacyModule.app,
+            io,
+          );
 
-        console.log(
-          '✅ Legacy Service successfully mounted and initialized.',
-        );
+          console.log(
+            '✅ Legacy Service successfully mounted and initialized',
+          );
+        }
       } else {
         console.warn(
-          '⚠️ TelephonyGateway server not available.',
+          '⚠️ TelephonyGateway server not available',
         );
       }
-    } catch (err) {
+    } catch (error) {
       console.error(
-        '❌ Legacy Service failed to initialize:',
-        err,
+        '❌ Legacy Service initialization failed:',
+        error,
       );
     }
   } catch (error) {
