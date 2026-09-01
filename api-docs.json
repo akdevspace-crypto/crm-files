@@ -1,0 +1,2058 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/exotel/dashboard-calls": {
+      "get": {
+        "operationId": "TelephonyController_getDashboardCalls",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/exotel/ai-summaries": {
+      "get": {
+        "operationId": "TelephonyController_getAiSummaries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/exotel/my-ringing-call": {
+      "get": {
+        "operationId": "TelephonyController_getMyRingingCall",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/exotel/agent-token": {
+      "post": {
+        "operationId": "TelephonyController_getAgentToken",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/exotel/incoming": {
+      "get": {
+        "operationId": "TelephonyController_handleIncomingCall_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "post": {
+        "operationId": "TelephonyController_handleIncomingCall_post",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "put": {
+        "operationId": "TelephonyController_handleIncomingCall_put",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "delete": {
+        "operationId": "TelephonyController_handleIncomingCall_delete",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "patch": {
+        "operationId": "TelephonyController_handleIncomingCall_patch",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "options": {
+        "operationId": "TelephonyController_handleIncomingCall_options",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "head": {
+        "operationId": "TelephonyController_handleIncomingCall_head",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "search": {
+        "operationId": "TelephonyController_handleIncomingCall_search",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/exotel/status": {
+      "get": {
+        "operationId": "TelephonyController_handleCallStatus_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "post": {
+        "operationId": "TelephonyController_handleCallStatus_post",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "put": {
+        "operationId": "TelephonyController_handleCallStatus_put",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "delete": {
+        "operationId": "TelephonyController_handleCallStatus_delete",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "patch": {
+        "operationId": "TelephonyController_handleCallStatus_patch",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "options": {
+        "operationId": "TelephonyController_handleCallStatus_options",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "head": {
+        "operationId": "TelephonyController_handleCallStatus_head",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      },
+      "search": {
+        "operationId": "TelephonyController_handleCallStatus_search",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/exotel/ai-bot/webhook": {
+      "post": {
+        "operationId": "TelephonyController_handleAiBotWebhook",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telephony"
+        ]
+      }
+    },
+    "/timeline/{id}": {
+      "get": {
+        "operationId": "TimelineController_getTimeline",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Timeline"
+        ]
+      }
+    },
+    "/omnichannel/mock-voice-message": {
+      "post": {
+        "operationId": "OmnichannelController_handleMockVoiceMessage",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Omnichannel"
+        ]
+      }
+    },
+    "/agents/dashboard-metrics": {
+      "get": {
+        "operationId": "AnalyticsController_getDashboardMetrics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Retrieve operational KPIs for dashboard tiles",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login, returns JWT tokens"
+          }
+        },
+        "summary": "Login user with email and password",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created"
+          }
+        },
+        "summary": "Register a new CRM user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [
+          {
+            "name": "user-agent",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Rotate JWT access token using refresh token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "operationId": "AuthController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retrieve currently logged-in user profile context",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Invalidate active JWT token and logout device session",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/organizations/{id}": {
+      "get": {
+        "operationId": "OrgController_getOrg",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retrieve organization metadata and branches",
+        "tags": [
+          "organizations"
+        ]
+      },
+      "put": {
+        "operationId": "OrgController_updateOrg",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrgDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update organization core business hours and settings",
+        "tags": [
+          "organizations"
+        ]
+      }
+    },
+    "/organizations/{orgId}/branches": {
+      "post": {
+        "operationId": "OrgController_addBranch",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBranchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add a new corporate branch location",
+        "tags": [
+          "organizations"
+        ]
+      }
+    },
+    "/organizations/branches/{branchId}": {
+      "delete": {
+        "operationId": "OrgController_removeBranch",
+        "parameters": [
+          {
+            "name": "branchId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a branch location",
+        "tags": [
+          "organizations"
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "UserController_listUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all organization users and agents",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UserController_getProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get user profile metadata",
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "operationId": "UserController_updateProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update user profile info and manager assignment",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/roles": {
+      "post": {
+        "operationId": "UserController_assignRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Assign dynamic role mapping to user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/roles/{roleId}": {
+      "delete": {
+        "operationId": "UserController_revokeRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Revoke dynamic role mapping from user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/status": {
+      "put": {
+        "operationId": "UserController_toggleStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Activate or deactivate user account",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/api/v1/agents": {
+      "get": {
+        "operationId": "LegacyAgentController_getAgents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "LegacyAgent"
+        ]
+      }
+    },
+    "/api/v1/agents/create": {
+      "post": {
+        "operationId": "LegacyAgentController_createAgent",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "LegacyAgent"
+        ]
+      }
+    },
+    "/api/v1/agents/{id}": {
+      "put": {
+        "operationId": "LegacyAgentController_updateAgent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "LegacyAgent"
+        ]
+      },
+      "delete": {
+        "operationId": "LegacyAgentController_deleteAgent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "LegacyAgent"
+        ]
+      }
+    },
+    "/leads": {
+      "get": {
+        "operationId": "LeadsController_getLeads",
+        "parameters": [
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agentId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retrieve all leads with dynamic PII masking",
+        "tags": [
+          "leads"
+        ]
+      },
+      "post": {
+        "operationId": "LeadsController_createLead",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Log a new manual lead record",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/{id}/claim": {
+      "post": {
+        "operationId": "LeadsController_claimLead",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Acquire lock and claim lead from unassigned pool",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/{id}/status": {
+      "put": {
+        "operationId": "LeadsController_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadStatusUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Transition lead pipeline status",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/{id}/notes": {
+      "get": {
+        "operationId": "LeadsController_getLeadNotes",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get audit notes for a lead",
+        "tags": [
+          "leads"
+        ]
+      },
+      "post": {
+        "operationId": "LeadsController_appendLeadNote",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeadNoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Append a new note to a lead",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/{id}/notes/{noteId}/correction": {
+      "post": {
+        "operationId": "LeadsController_appendCorrectionNote",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Append a correction to an existing note",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/{id}/report/generate": {
+      "post": {
+        "operationId": "LeadsController_generateReport",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate AI Lead History Report",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/{id}/report": {
+      "get": {
+        "operationId": "LeadsController_getLatestReport",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get latest Lead History Report",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/report/{reportId}/export/pdf": {
+      "get": {
+        "operationId": "LeadsController_exportReportPdf",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export Report as PDF",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/report/{reportId}/export/word": {
+      "get": {
+        "operationId": "LeadsController_exportReportWord",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export Report as Word",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/leads/report/{reportId}/email": {
+      "post": {
+        "operationId": "LeadsController_emailReport",
+        "parameters": [
+          {
+            "name": "reportId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Email Lead Report",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/v1/integrations/website/enquiry": {
+      "post": {
+        "operationId": "WebsiteWebhookController_handleWebsiteEnquiry",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Public webhook for website enquiry form submissions",
+        "tags": [
+          "website-integrations"
+        ]
+      }
+    },
+    "/activities": {
+      "get": {
+        "operationId": "ActivitiesController_getActivities",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "leadId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List activities filtered by lead or customer context",
+        "tags": [
+          "activities"
+        ]
+      },
+      "post": {
+        "operationId": "ActivitiesController_createActivity",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActivityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Log a new customer or lead interaction event",
+        "tags": [
+          "activities"
+        ]
+      }
+    },
+    "/activities/{id}/comments": {
+      "post": {
+        "operationId": "ActivitiesController_addComment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add a text comment to an activity record",
+        "tags": [
+          "activities"
+        ]
+      }
+    },
+    "/activities/{id}": {
+      "delete": {
+        "operationId": "ActivitiesController_deleteActivity",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remove an activity log entry",
+        "tags": [
+          "activities"
+        ]
+      }
+    },
+    "/calendar": {
+      "get": {
+        "operationId": "CalendarController_getEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List calendar events",
+        "tags": [
+          "calendar"
+        ]
+      },
+      "post": {
+        "operationId": "CalendarController_createEvent",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEventDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Schedule a new calendar appointment event",
+        "tags": [
+          "calendar"
+        ]
+      }
+    },
+    "/calendar/{id}": {
+      "put": {
+        "operationId": "CalendarController_updateEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEventDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update scheduled calendar appointment",
+        "tags": [
+          "calendar"
+        ]
+      },
+      "delete": {
+        "operationId": "CalendarController_deleteEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel calendar appointment event",
+        "tags": [
+          "calendar"
+        ]
+      }
+    },
+    "/dashboard/analytics": {
+      "get": {
+        "operationId": "DashboardController_getDashboardAnalytics",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-07-01T00:00:00Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-07-31T23:59:59Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Management",
+              "type": "string"
+            }
+          },
+          {
+            "name": "team",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "North Team",
+              "type": "string"
+            }
+          },
+          {
+            "name": "agentId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "agent-uuid-here",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retrieve dynamic metrics and layouts for the specified dashboard preset",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/customers/merge": {
+      "post": {
+        "operationId": "CustomersController_mergeCustomers",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Customers"
+        ]
+      }
+    },
+    "/v1/emergency/dispatch": {
+      "post": {
+        "operationId": "EmergencyController_dispatchAlert",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Emergency"
+        ]
+      }
+    },
+    "/v1/approvals": {
+      "post": {
+        "operationId": "ApprovalsController_createRequest",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Approvals"
+        ]
+      },
+      "get": {
+        "operationId": "ApprovalsController_getRequests",
+        "parameters": [
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requesterId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Approvals"
+        ]
+      }
+    },
+    "/v1/approvals/{id}/review": {
+      "put": {
+        "operationId": "ApprovalsController_reviewRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Approvals"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "ElderCare CRM API",
+    "description": "API documentation for the CRM Platform",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@paramantra.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123"
+          },
+          "rememberMe": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@paramantra.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123"
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "Organization ID if registering for a tenant"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "UpdateOrgDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Paramantra Enterprise"
+          },
+          "gstNumber": {
+            "type": "string",
+            "example": "29ABCDE1234F1Z5"
+          },
+          "address": {
+            "type": "string",
+            "example": "100 Innovation Way"
+          },
+          "city": {
+            "type": "string",
+            "example": "Bangalore"
+          },
+          "country": {
+            "type": "string",
+            "example": "India"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Kolkata"
+          },
+          "businessHours": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CreateBranchDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "North Branch"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Avenue Road"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Agent Smith"
+          },
+          "department": {
+            "type": "string",
+            "example": "Customer Support"
+          },
+          "extension": {
+            "type": "string",
+            "example": "102"
+          },
+          "reportingManagerId": {
+            "type": "string",
+            "example": "fc75cbca-5a45-46e9-9905-521d708e5ebe"
+          },
+          "designation": {
+            "type": "string",
+            "example": "SUPPORT_LEAD"
+          }
+        }
+      },
+      "AssignRoleDto": {
+        "type": "object",
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "example": "fc75cbca-5a45-46e9-9905-521d708e5ebe"
+          }
+        },
+        "required": [
+          "roleId"
+        ]
+      },
+      "UserStatusDto": {
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "isActive"
+        ]
+      },
+      "CreateLeadDto": {
+        "type": "object",
+        "properties": {
+          "customerName": {
+            "type": "string",
+            "example": "Bruce Wayne"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+15551234567"
+          },
+          "email": {
+            "type": "string",
+            "example": "bruce@wayne.com"
+          },
+          "serviceInterest": {
+            "type": "string",
+            "example": "Elderly Care Services"
+          },
+          "city": {
+            "type": "string",
+            "example": "Gotham"
+          },
+          "notes": {
+            "type": "string",
+            "example": "Needs weekend assistance"
+          },
+          "source": {
+            "type": "string",
+            "example": "Google Ads"
+          }
+        },
+        "required": [
+          "customerName",
+          "phoneNumber"
+        ]
+      },
+      "LeadStatusUpdateDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "CONVERTED"
+          },
+          "notes": {
+            "type": "string",
+            "example": "Customer called back and agreed to plan"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "CreateLeadNoteDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Customer called back and agreed to plan"
+          },
+          "callId": {
+            "type": "string",
+            "example": "uuid"
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "CreateActivityDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CALL",
+              "MEETING",
+              "EMAIL",
+              "TASK",
+              "WHATSAPP",
+              "SITE_VISIT"
+            ],
+            "example": "CALL"
+          },
+          "subject": {
+            "type": "string",
+            "example": "Discussed premium pricing options"
+          },
+          "description": {
+            "type": "string",
+            "example": "Customer called to request a price quotation"
+          },
+          "dueDate": {
+            "type": "string",
+            "example": "2026-05-21T10:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Linked Customer ID"
+          },
+          "leadId": {
+            "type": "string",
+            "description": "Linked Lead ID"
+          }
+        },
+        "required": [
+          "type",
+          "subject"
+        ]
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Supervisor feedback: Pricing approved."
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "CreateEventDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Discuss service plan options"
+          },
+          "startTime": {
+            "type": "string",
+            "example": "2026-05-21T10:00:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "2026-05-21T11:00:00Z"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "fc75cbca-5a45-46e9-9905-521d708e5ebe",
+            "description": "Linked Customer ID"
+          },
+          "status": {
+            "type": "string",
+            "example": "SCHEDULED"
+          },
+          "type": {
+            "type": "string",
+            "example": "MEETING"
+          },
+          "externalSync": {
+            "type": "boolean",
+            "description": "Outlook/Google calendar sync status"
+          }
+        },
+        "required": [
+          "title",
+          "startTime",
+          "endTime",
+          "customerId"
+        ]
+      },
+      "UpdateEventDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Discuss service plan options"
+          },
+          "startTime": {
+            "type": "string",
+            "example": "2026-05-21T10:00:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "example": "2026-05-21T11:00:00Z"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "fc75cbca-5a45-46e9-9905-521d708e5ebe",
+            "description": "Linked Customer ID"
+          },
+          "status": {
+            "type": "string",
+            "example": "SCHEDULED"
+          },
+          "type": {
+            "type": "string",
+            "example": "MEETING"
+          },
+          "externalSync": {
+            "type": "boolean",
+            "description": "Outlook/Google calendar sync status"
+          }
+        },
+        "required": [
+          "title",
+          "startTime",
+          "endTime",
+          "customerId"
+        ]
+      }
+    }
+  }
+}
