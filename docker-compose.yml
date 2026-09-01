@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # REDIS - Queue Engine
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: crm_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # ==========================================
+  # POSTGRESQL - Main CRM Database
+  # ==========================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: crm_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: eldercare
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+
+
+  # ==========================================
+  # FREESWITCH - SIP & IVR Engine
+  # ==========================================
+  freeswitch:
+    image: bettervoice/freeswitch-container:latest
+    container_name: crm_freeswitch
+    network_mode: "host"
+    volumes:
+      - ./freeswitch/conf:/usr/local/freeswitch/conf
+      - ./freeswitch/sounds:/usr/local/freeswitch/sounds
+    restart: unless-stopped
+
+  # ==========================================
+  # COTURN - WebRTC NAT Traversal
+  # ==========================================
+  coturn:
+    image: coturn/coturn
+    container_name: crm_coturn
+    network_mode: "host"
+    environment:
+      TURN_REALM: "crm.eldercare.local"
+      TURN_USER: "admin:securepassword123"
+    command: >
+      --log-file=stdout
+      --external-ip=$$(curl -s ifconfig.me)
+      --min-port=49152
+      --max-port=65535
+      --use-auth-secret
+      --static-auth-secret=supersecret
+    restart: unless-stopped
+
+  # ==========================================
+  # NGINX - API Gateway & Load Balancer
+  # ==========================================
+  nginx:
+    image: nginx:alpine
+    container_name: crm_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+
+  # ==========================================
+  # NESTJS MICROSERVICES
+  # ==========================================
+  api-gateway:
+    build: 
+      context: ./backend-nestjs
+    container_name: nest_api_gateway
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://admin:secretpassword@postgres:5432/eldercare
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
+  agent-service:
+    build: 
+      context: ./backend-nestjs
+    container_name: nest_agent_service
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://admin:secretpassword@postgres:5432/eldercare
+    deploy:
+      replicas: 2
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  queue-service:
+    build: 
+      context: ./backend-nestjs
+    container_name: nest_queue_service
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # ==========================================
+  # OBSERVABILITY (Prometheus & Grafana)
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: crm_prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: crm_grafana
+    ports:
+      - "3002:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  pg_data:

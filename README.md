@@ -1,98 +1,95 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# ElderCare Enterprise CRM - User Manual & Documentation
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Welcome to the **ElderCare Enterprise CRM**, a next-generation, omnichannel customer relationship management system designed for seamless agent workflows, AI-driven insights, and real-time telephony. 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This manual provides a beginner-friendly overview of all the modules, functions, and architecture powering the system.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🏗️ System Architecture Overview
 
-## Project setup
+The CRM is built on a modern, real-time technology stack:
+* **Frontend**: Next.js 16 (React) with TailwindCSS and Framer Motion for a dynamic, real-time UI.
+* **Backend**: Node.js & Express.js.
+* **Database**: Supabase (PostgreSQL) managed via Prisma ORM.
+* **Real-time State**: Redis (for agent presence) and Socket.io (for instant signaling).
+* **Telephony**: Mediasoup SFU (Selective Forwarding Unit) for high-performance WebRTC voice calls, bridged with Exotel APIs for traditional PSTN networks.
+* **AI Engine**: Google Gemini 2.5 Pro for automated call summarization and sentiment analysis.
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 📱 Core Modules & Features
 
-```bash
-# development
-$ npm run start
+### 1. Dashboard & Analytics
+**Purpose**: The central command center for agents and supervisors.
+* **Real-Time Metrics**: Displays the agent's total calls, average handle time, and active tickets for the day.
+* **Agent Status Toggle**: Agents can switch their availability (Available, Busy, Offline) instantly.
+* **Global Activity Feed**: A live feed of omnichannel events (incoming calls, new WhatsApp messages, system alerts).
 
-# watch mode
-$ npm run start:dev
+### 2. Call Center & Telephony (WebRTC)
+**Purpose**: A fully integrated software-based phone system that eliminates the need for physical desk phones.
+* **Inbound Call Routing**: When a customer calls the main company number, the Exotel webhook pings the backend. The backend checks Redis for available agents and routes the call instantly to an agent's screen.
+* **Outbound Calling**: Agents can click-to-call any customer directly from the CRM. 
+* **Live Call Widget**: A floating interface that handles microphone/speaker muting, call timers, and displays real-time customer profiles (Active Service Plans, Past Notes) while on the call.
+* **Graceful Teardown**: Built-in logic ensures that when a call ends, microphone resources are cleanly released and the agent is seamlessly returned to the queue.
 
-# production mode
-$ npm run start:prod
-```
+### 3. AI Summarization & Call Recording
+**Purpose**: Automating the post-call wrap-up process.
+* **Background Recording**: All voice calls are silently recorded on the server using FFmpeg and automatically uploaded to secure Supabase Cloud Storage.
+* **Gemini AI Integration**: For outbound calls, the recorded audio is instantly analyzed by Google Gemini AI.
+* **Automated Notes**: The AI generates a structured JSON report containing:
+  * A 2-sentence summary of the conversation.
+  * Sentiment analysis (Positive, Neutral, Negative).
+  * Escalation Risk Level.
+  * Actionable next steps for the agent.
+* **Post-Call Feedback**: Agents are prompted with a quick manual feedback modal to classify the disposition (e.g., "Follow-up required") before taking the next call.
 
-## Run tests
+### 4. Omnichannel Inbox
+**Purpose**: Unifying all text-based customer communication into a single thread.
+* **Supported Channels**: WhatsApp (Twilio), Instagram DMs, and standard Email.
+* **Unified Thread**: Agents see a single, chronological chat history for a customer, regardless of which platform the customer used to send the message.
+* **Quick Replies**: Agents can reply directly from the CRM, and the backend routes the message back to the correct platform (WhatsApp, IG, etc.).
 
-```bash
-# unit tests
-$ npm run test
+### 5. Customer Data Management
+**Purpose**: A 360-degree view of the customer.
+* **Dynamic Profiles**: Stores contact info, active service plans, and lifetime interaction history.
+* **Automated Context**: When a customer calls or messages, their profile is automatically fetched and displayed next to the communication widget so the agent has instant context.
 
-# e2e tests
-$ npm run test:e2e
+### 6. Agent Directory & Administration
+**Purpose**: Managing the workforce and access controls.
+* **Super Admin Role**: A specialized role (enforced at the database level) that allows a single user to manage the entire platform.
+* **Agent CRUD**: Admins can Create, Read, Update, and Delete agent profiles.
+* **Live Presence Tracking**: The directory shows exactly who is currently online, on a call, or offline, synced via Redis.
 
-# test coverage
-$ npm run test:cov
-```
+### 7. Internal Ticketing System
+**Purpose**: Tracking complex issues that require escalation.
+* **Ticket Creation**: Agents can convert complex customer queries into internal tickets.
+* **Tracking**: Tickets have statuses (Open, In Progress, Resolved) and priorities, allowing teams to collaborate on resolving customer grievances.
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🚀 Beginner Workflows
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### How to Handle an Inbound Call
+1. Ensure your status on the Dashboard is set to **Available**.
+2. When a customer calls, a ringing modal will pop up with their Caller ID.
+3. Click **Accept**. The Call Widget will open, connecting your microphone. The customer's profile will automatically load on the screen.
+4. Assist the customer.
+5. Click **End Call**. You will be seamlessly returned to the Available queue.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### How to Make an Outbound Call
+1. Navigate to the **Customer Data** module or the **Omnichannel Inbox**.
+2. Click the **Phone Icon** next to a customer's name.
+3. The Call Widget will open in "Connecting" mode. 
+4. Once the customer answers, the timer begins.
+5. Click **End Call**. 
+6. Fill out the brief **Post-Call Feedback** popup. 
+7. The CRM will automatically attach the recording and AI-generated summary to the customer's profile in the background.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🛠️ Technical Troubleshooting for Developers
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+* **Audio Not Connecting?** Ensure you are accessing the CRM via your local Wi-Fi IP address (e.g., `http://192.168.1.5:3000`). Microsoft DevTunnels and Ngrok block the UDP ports (10000-10100) required for WebRTC audio transmission.
+* **Backend Crashes on Call End?** The backend handles FFmpeg recording, Supabase uploads, and AI generation asynchronously. These are wrapped in robust `try-catch` blocks to prevent unhandled promise rejections from crashing the WebSocket server.
+* **Roles & Permissions**: There can only be one `SUPER_ADMIN`. If you need to reassign it, you must demote the current Super Admin first.
