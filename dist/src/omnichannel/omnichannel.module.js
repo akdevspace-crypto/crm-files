@@ -13,6 +13,8 @@ const prisma_module_1 = require("../prisma/prisma.module");
 const redis_module_1 = require("../redis/redis.module");
 const instagram_enrichment_service_1 = require("./instagram-enrichment.service");
 const instagram_enrichment_processor_1 = require("./instagram-enrichment.processor");
+const omnichannel_controller_1 = require("./omnichannel.controller");
+const voice_assistant_service_1 = require("./voice-assistant.service");
 let OmnichannelModule = class OmnichannelModule {
 };
 exports.OmnichannelModule = OmnichannelModule;
@@ -25,8 +27,9 @@ exports.OmnichannelModule = OmnichannelModule = __decorate([
                 name: 'instagram-enrichment',
             }),
         ],
-        providers: [instagram_enrichment_service_1.InstagramProfileEnrichmentService, instagram_enrichment_processor_1.InstagramEnrichmentProcessor],
-        exports: [instagram_enrichment_service_1.InstagramProfileEnrichmentService],
+        controllers: [omnichannel_controller_1.OmnichannelController],
+        providers: [instagram_enrichment_service_1.InstagramProfileEnrichmentService, instagram_enrichment_processor_1.InstagramEnrichmentProcessor, voice_assistant_service_1.VoiceAssistantService],
+        exports: [instagram_enrichment_service_1.InstagramProfileEnrichmentService, voice_assistant_service_1.VoiceAssistantService],
     })
 ], OmnichannelModule);
 //# sourceMappingURL=omnichannel.module.js.map

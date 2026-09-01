@@ -1,0 +1,225 @@
+import { LeadsService } from './leads.service';
+import { CreateLeadDto, LeadStatusUpdateDto, CreateLeadNoteDto } from './dto/lead.dto';
+import { AiReportService } from './ai-report.service';
+export declare class LeadsController {
+    private readonly leadsService;
+    private readonly aiReportService;
+    constructor(leadsService: LeadsService, aiReportService: AiReportService);
+    getLeads(req: any, status?: string, agentId?: string): Promise<{
+        phoneNumber: string;
+        agentName: string;
+        assignedAgent: {
+            id: string;
+            name: string;
+            address: string | null;
+            city: string | null;
+            country: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            phone: string | null;
+            state: string | null;
+            zipCode: string | null;
+            gender: string | null;
+            dob: Date | null;
+            employeeId: string | null;
+            department: string | null;
+            avatarUrl: string | null;
+            status: import(".prisma/client").$Enums.AgentStatus;
+            socketId: string | null;
+            lastActive: Date | null;
+            joinedAt: Date;
+            isDeleted: boolean;
+            activeCalls: number;
+            lastAssignedAt: Date | null;
+            extension: string | null;
+            skills: string[];
+            userId: string;
+        } | null;
+        followups: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            leadId: string;
+            notes: string | null;
+            assignedAgentId: string;
+            followupDate: Date;
+            meetingType: import(".prisma/client").$Enums.MeetingType;
+            purpose: string | null;
+            customerConfirmation: boolean;
+        }[];
+        id: string;
+        city: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        status: import(".prisma/client").$Enums.LeadStatus;
+        source: string | null;
+        sentiment: string | null;
+        notes: string | null;
+        customerName: string;
+        serviceInterest: string | null;
+        priority: import(".prisma/client").$Enums.LeadPriority;
+        conversionScore: number | null;
+        uploadedById: string | null;
+        assignedAgentId: string | null;
+        uploadHistoryId: string | null;
+        lockedAt: Date | null;
+    }[]>;
+    createLead(req: any, dto: CreateLeadDto): Promise<{
+        id: string;
+        city: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        status: import(".prisma/client").$Enums.LeadStatus;
+        source: string | null;
+        sentiment: string | null;
+        notes: string | null;
+        phoneNumber: string;
+        customerName: string;
+        serviceInterest: string | null;
+        priority: import(".prisma/client").$Enums.LeadPriority;
+        conversionScore: number | null;
+        uploadedById: string | null;
+        assignedAgentId: string | null;
+        uploadHistoryId: string | null;
+        lockedAt: Date | null;
+    }>;
+    claimLead(req: any, id: string): Promise<{
+        id: string;
+        city: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        status: import(".prisma/client").$Enums.LeadStatus;
+        source: string | null;
+        sentiment: string | null;
+        notes: string | null;
+        phoneNumber: string;
+        customerName: string;
+        serviceInterest: string | null;
+        priority: import(".prisma/client").$Enums.LeadPriority;
+        conversionScore: number | null;
+        uploadedById: string | null;
+        assignedAgentId: string | null;
+        uploadHistoryId: string | null;
+        lockedAt: Date | null;
+    }>;
+    updateStatus(req: any, id: string, dto: LeadStatusUpdateDto): Promise<{
+        id: string;
+        city: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        email: string | null;
+        status: import(".prisma/client").$Enums.LeadStatus;
+        source: string | null;
+        sentiment: string | null;
+        notes: string | null;
+        phoneNumber: string;
+        customerName: string;
+        serviceInterest: string | null;
+        priority: import(".prisma/client").$Enums.LeadPriority;
+        conversionScore: number | null;
+        uploadedById: string | null;
+        assignedAgentId: string | null;
+        uploadHistoryId: string | null;
+        lockedAt: Date | null;
+    }>;
+    getLeadNotes(id: string): Promise<({
+        agent: {
+            name: string;
+            department: string | null;
+        } | null;
+    } & {
+        id: string;
+        createdAt: Date;
+        department: string | null;
+        source: string;
+        leadId: string;
+        agentId: string | null;
+        content: string;
+        actionType: string | null;
+        meetingId: string | null;
+        isCorrection: boolean;
+        callId: string | null;
+        correctedNoteId: string | null;
+    })[]>;
+    appendLeadNote(req: any, id: string, dto: CreateLeadNoteDto): Promise<{
+        id: string;
+        createdAt: Date;
+        department: string | null;
+        source: string;
+        leadId: string;
+        agentId: string | null;
+        content: string;
+        actionType: string | null;
+        meetingId: string | null;
+        isCorrection: boolean;
+        callId: string | null;
+        correctedNoteId: string | null;
+    }>;
+    appendCorrectionNote(req: any, leadId: string, noteId: string, dto: {
+        content: string;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        department: string | null;
+        source: string;
+        leadId: string;
+        agentId: string | null;
+        content: string;
+        actionType: string | null;
+        meetingId: string | null;
+        isCorrection: boolean;
+        callId: string | null;
+        correctedNoteId: string | null;
+    }>;
+    generateReport(req: any, id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        leadId: string;
+        content: import("@prisma/client/runtime/library").JsonValue;
+        generatedBy: string;
+    }>;
+    getLatestReport(id: string): Promise<({
+        user: {
+            email: string;
+        };
+        lead: {
+            id: string;
+            city: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            email: string | null;
+            status: import(".prisma/client").$Enums.LeadStatus;
+            source: string | null;
+            sentiment: string | null;
+            notes: string | null;
+            phoneNumber: string;
+            customerName: string;
+            serviceInterest: string | null;
+            priority: import(".prisma/client").$Enums.LeadPriority;
+            conversionScore: number | null;
+            uploadedById: string | null;
+            assignedAgentId: string | null;
+            uploadHistoryId: string | null;
+            lockedAt: Date | null;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        leadId: string;
+        content: import("@prisma/client/runtime/library").JsonValue;
+        generatedBy: string;
+    }) | null>;
+    exportReportPdf(reportId: string, req: any, res: any): Promise<void>;
+    exportReportWord(reportId: string, req: any, res: any): Promise<void>;
+    emailReport(reportId: string, emailTo: string): Promise<{
+        success: boolean;
+        message?: undefined;
+    } | {
+        success: boolean;
+        message: string;
+    }>;
+}
