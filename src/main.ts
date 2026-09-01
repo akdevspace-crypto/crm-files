@@ -1,83 +1,36 @@
 import * as dotenv from 'dotenv';
-
-dotenv.config();
+import * as path from 'path';
+dotenv.config({ path: path.resolve(process.cwd(), '../backend/.env') });
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as express from 'express';
-import { TelephonyGateway } from './telephony/telephony.gateway';
 
-// Import legacy express application
-const legacyModule = require('./legacy/index.js');
+import * as express from 'express';
+
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as fs from 'fs';
 
 async function bootstrap() {
-  try {
-    const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
 
-    // Middleware
-    app.use(express.urlencoded({ extended: true }));
-    app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
 
-    // CORS
-    app.enableCors({
-      origin: true,
-      credentials: true,
-    });
+  app.enableCors({ origin: '*' });
 
-    app.enableShutdownHooks();
+  const config = new DocumentBuilder()
+    .setTitle('ElderCare CRM API')
+    .setDescription('API documentation for the CRM Platform')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+  
+  // Save swagger JSON to file
+  fs.writeFileSync('api-docs.json', JSON.stringify(document, null, 2));
 
-    // Get underlying Express instance
-    const expressInstance = app.getHttpAdapter().getInstance();
-
-    // Mount legacy routes
-    if (legacyModule?.app) {
-      expressInstance.use(legacyModule.app);
-      console.log('✅ Legacy Express routes mounted');
-    }
-
-    // Render provides PORT automatically
-    const port = parseInt(process.env.PORT || '4000', 10);
-
-    // Important for Render/Docker deployments
-    await app.listen(port, '0.0.0.0');
-
-    console.log(`🚀 Unified Backend running on port ${port}`);
-
-    // Initialize Socket.IO integrations
-    try {
-      const telephonyGateway = app.get(TelephonyGateway);
-
-      if (telephonyGateway?.server) {
-        const io = telephonyGateway.server;
-
-        if (legacyModule?.mountLegacyApp) {
-          legacyModule.mountLegacyApp(
-            legacyModule.app,
-            io,
-          );
-
-          console.log(
-            '✅ Legacy Service successfully mounted and initialized',
-          );
-        }
-      } else {
-        console.warn(
-          '⚠️ TelephonyGateway server not available',
-        );
-      }
-    } catch (error) {
-      console.error(
-        '❌ Legacy Service initialization failed:',
-        error,
-      );
-    }
-  } catch (error) {
-    console.error(
-      '❌ Application bootstrap failed:',
-      error,
-    );
-    process.exit(1);
-  }
+  app.enableShutdownHooks();
+  await app.listen(3005);
 }
-
 bootstrap();

@@ -1,4 +1,4 @@
-import { Controller, All, Req, Logger, Header, Get } from '@nestjs/common';
+import { Controller, All, Req, Logger, Header, Get, Post, Body } from '@nestjs/common';
 import type { Request } from 'express';
 import { LivekitService } from './livekit.service';
 import { TelephonyService } from './telephony.service';
@@ -19,6 +19,11 @@ export class TelephonyController {
   @Get('dashboard-calls')
   async getDashboardCalls() {
     return await this.telephonyService.getDashboardCalls();
+  }
+
+  @Get('ai-summaries')
+  async getAiSummaries() {
+    return await this.telephonyService.getAiSummaries();
   }
 
   @Get('my-ringing-call')
@@ -50,6 +55,20 @@ export class TelephonyController {
         token,
       },
     };
+  }
+
+  @Post('agent-token')
+  async getAgentToken(@Body() body: { roomName: string; participantName: string }) {
+    try {
+      const token = await this.livekitService.generateAgentToken(
+        body.roomName || `room_${Date.now()}`,
+        body.participantName || 'Agent'
+      );
+      return { token };
+    } catch (e) {
+      // If LiveKit is not configured in .env, fallback to mock token so frontend UI can still simulate the call
+      return { token: 'mock-token' };
+    }
   }
 
   @All('incoming')
@@ -142,7 +161,7 @@ export class TelephonyController {
       const twimlResponse = `
 <Response>
     <Dial action="${baseUrl}/exotel/status">
-        <Sip>sip:${roomName}@${livekitSipDomain}</Sip>
+        <Number>sip:${roomName}@${livekitSipDomain}</Number>
     </Dial>
 </Response>`.trim();
       this.logger.log(`[DEBUG] Returning TwiML to Provider: \n${twimlResponse}`);
@@ -199,5 +218,18 @@ export class TelephonyController {
     }
     
     return 'OK';
+  }
+
+  @Post('ai-bot/webhook')
+  async handleAiBotWebhook(@Body() body: any) {
+    this.logger.log(`Received AI Bot Webhook payload: ${JSON.stringify(body)}`);
+    
+    if (body.leadId) {
+      const genericAgent = await this.telephonyService.getGenericAgent();
+      if (genericAgent) {
+        await this.telephonyService.saveAiBotResults(body.leadId, body, genericAgent.id);
+      }
+    }
+    return { success: true };
   }
 }

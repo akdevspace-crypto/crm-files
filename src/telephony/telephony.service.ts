@@ -2,12 +2,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { createClient } from '@supabase/supabase-js';
 import fetch from 'node-fetch';
+import { TimelineService } from '../timeline/timeline.service';
+import { AiSpeechService } from './ai-speech.service';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TelephonyService {
   private readonly logger = new Logger(TelephonyService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly timelineService: TimelineService,
+    private readonly aiSpeechService: AiSpeechService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   // ==========================================
   // CRM CONTEXT & VOICEBOT
@@ -146,7 +154,7 @@ export class TelephonyService {
 
       // Mark agent as AVAILABLE again
       const agentParticipant = session.participants.find(
-       (p: any) => p.role === 'AGENT' && p.agentId,
+        (p) => p.role === 'AGENT' && p.agentId,
       );
       if (agentParticipant && agentParticipant.agentId) {
         await this.prisma.agent.update({
@@ -166,6 +174,16 @@ export class TelephonyService {
           data: { status: 'AVAILABLE', activeCalls: 0 },
         });
       }
+
+      // Trigger AI Speech Intelligence if call was answered (duration > 0 or has participants)
+      if (duration > 0 || session.participants.length > 0) {
+        this.aiSpeechService.processSpeechIntelligence(session.id).catch(err => {
+          this.logger.error(`AI Speech processing failed in background: ${err.message}`);
+        });
+      }
+
+      this.eventEmitter.emit('call.ended', session);
+      
     } catch (e) {
       this.logger.error(`Failed to end CallSession: ${e.message}`);
     }
@@ -191,6 +209,24 @@ export class TelephonyService {
     });
 
     return { queuedCalls, missedCalls };
+  }
+
+  async getAiSummaries() {
+    return await this.prisma.callAnalytics.findMany({
+      where: { summary: { not: null } },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+      include: {
+        callSession: {
+          include: {
+            customer: { select: { name: true, phone: true } },
+            participants: {
+              where: { role: 'AGENT' }
+            }
+          }
+        }
+      }
+    });
   }
 
   async getMyRingingCall(agentId: string) {
@@ -286,5 +322,104 @@ export class TelephonyService {
     this.logger.log(
       `[AI Voicebot Placeholder] Dispatching AI Voicebot to room: ${roomName}`,
     );
+  }
+
+  @OnEvent('call.outbound.requested')
+  async handleOutboundCallRequest(lead: any) {
+    this.logger.log(`Received automated outbound call request for lead ${lead?.id}`);
+    if (lead) {
+      await this.triggerAiCallBot(lead);
+    }
+  }
+
+  // ==========================================
+  // AI CALL BOT (LEAD AUTOMATION)
+  // ==========================================
+  async triggerAiCallBot(lead: any) {
+    this.logger.log(`Triggering AI Call Bot for lead ${lead.id}`);
+    const roomName = `ai_bot_${lead.id}_${Date.now()}`;
+    
+    // We would create a CallSession here
+    await this.createCallSession(
+      `outbound_ai_${lead.id}`,
+      roomName,
+      undefined,
+      undefined 
+    );
+
+    const livekitSipDomain = '4c0ct02u07s.sip.livekit.cloud';
+    this.logger.log(`Dispatching AI Voicebot SIP trunk: sip:${roomName}@${livekitSipDomain} for lead phone ${lead.phoneNumber}`);
+    
+    // Update the lead status to indicate AI is handling it
+    await this.prisma.lead.update({
+      where: { id: lead.id },
+      data: { status: 'IN_PROGRESS' },
+    });
+
+    await this.timelineService.logEvent({
+      leadId: lead.id,
+      eventType: 'AI_BOT_CALL',
+      title: 'AI Bot Triggered',
+      description: `Outbound AI call initiated for ${lead.phoneNumber}`,
+      department: 'AI Automation',
+      communication: 'Outbound Call',
+      status: 'COMPLETED',
+    });
+  }
+
+  async getGenericAgent() {
+    let agent = await this.prisma.agent.findFirst({
+      where: { status: 'AVAILABLE' }
+    });
+    if (!agent) {
+       agent = await this.prisma.agent.findFirst();
+    }
+    return agent;
+  }
+
+  async saveAiBotResults(leadId: string, botData: any, agentId: string) {
+    const notes = `AI Bot Summary:
+Requirement: ${botData.requirement || 'N/A'}
+Preferred Service: ${botData.service || 'N/A'}
+Callback Time: ${botData.callbackTime || 'N/A'}
+Transcript: ${botData.transcript || ''}`;
+
+    await this.prisma.lead.update({
+      where: { id: leadId },
+      data: { notes },
+    });
+
+    await this.prisma.leadNote.create({
+      data: {
+        leadId,
+        agentId: agentId || null,
+        department: 'AI Bot',
+        content: notes,
+      }
+    });
+
+    if (agentId) {
+      await this.prisma.crmTask.create({
+        data: {
+          agentId,
+          title: `AI Follow-up: ${botData.service || 'Lead'}`,
+          description: notes,
+          status: 'TODO',
+          priority: 'HIGH',
+        }
+      });
+      this.logger.log(`Saved AI results and created follow-up task for lead ${leadId}`);
+    }
+
+    await this.timelineService.logEvent({
+      leadId: leadId,
+      userId: agentId,
+      eventType: 'FOLLOW_UP',
+      title: 'Follow-up #1 (AI)',
+      description: `AI Extracted Requirement: ${botData.requirement || 'N/A'}, Service: ${botData.service || 'N/A'}, Callback: ${botData.callbackTime || 'N/A'}`,
+      department: 'AI Automation',
+      communication: 'AI Summary',
+      status: 'COMPLETED',
+    });
   }
 }

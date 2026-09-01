@@ -4,6 +4,8 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { RedisModule } from '../redis/redis.module';
 import { InstagramProfileEnrichmentService } from './instagram-enrichment.service';
 import { InstagramEnrichmentProcessor } from './instagram-enrichment.processor';
+import { OmnichannelController } from './omnichannel.controller';
+import { VoiceAssistantService } from './voice-assistant.service';
 
 @Module({
   imports: [
@@ -13,7 +15,8 @@ import { InstagramEnrichmentProcessor } from './instagram-enrichment.processor';
       name: 'instagram-enrichment',
     }),
   ],
-  providers: [InstagramProfileEnrichmentService, InstagramEnrichmentProcessor],
-  exports: [InstagramProfileEnrichmentService],
+  controllers: [OmnichannelController],
+  providers: [InstagramProfileEnrichmentService, InstagramEnrichmentProcessor, VoiceAssistantService],
+  exports: [InstagramProfileEnrichmentService, VoiceAssistantService],
 })
 export class OmnichannelModule {}

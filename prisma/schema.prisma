@@ -81,6 +81,18 @@ enum MeetingType {
   DEMO_MEETING
 }
 
+enum AppointmentType {
+  MEETING
+  CALL
+  FOLLOW_UP
+  REMINDER
+  VISIT
+  DEMO
+  INTERVIEW
+  EVENT
+  HOLIDAY
+}
+
 model User {
   id            String    @id @default(uuid()) @db.Uuid
   authUserId    String?   @unique // Supabase Auth UUID
@@ -96,6 +108,16 @@ model User {
   supervisorLogs SupervisorLog[]
   uploadedLeads Lead[] @relation("UploadedLeads")
   leadUploads   LeadUploadHistory[] @relation("LeadUploads")
+
+  approvalsRequested ApprovalRequest[] @relation("ApprovalsRequested")
+  approvalsReviewed  ApprovalRequest[] @relation("ApprovalsReviewed")
+
+  organizationId String?   @db.Uuid
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  userRoles     UserRoleAssignment[]
+  sessions      Session[]
+  timelineEvents ClientTimelineEvent[]
+  reportsGenerated LeadReport[]
 }
 
 model Agent {
@@ -145,8 +167,10 @@ model Agent {
 
   // Lead Management Relations
   assignedLeads       Lead[] @relation("AssignedLeads")
+  leadNotes           LeadNote[] @relation("AgentLeadNotes")
   agentFollowups      LeadFollowup[] @relation("AgentFollowups")
   agentConversionLogs LeadConversionLog[] @relation("AgentConversionLogs")
+  activities          Activity[]
 }
 
 model Customer {
@@ -178,9 +202,11 @@ model Customer {
   appointments     Appointment[]
   crmTasks         CrmTask[]
   platformIdentities PlatformIdentity[]
+  activities       Activity[]
 
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+  timelineEvents   ClientTimelineEvent[]
 }
 
 model PlatformIdentity {
@@ -226,6 +252,17 @@ model Message {
   content        String
   status         String       // 'SENT', 'DELIVERED', 'READ'
   isAiSuggested  Boolean      @default(false)
+  
+  // Voice & Multimedia
+  attachmentUrl   String?
+  attachmentType  String?      // 'audio', 'image', 'document'
+  
+  // Voice Intelligence
+  transcript      String?      @db.Text
+  translation     String?      @db.Text
+  detectedLanguage String?
+  aiIntent        String?
+  aiResponse      String?      @db.Text
   
   createdAt      DateTime     @default(now())
 }
@@ -432,6 +469,7 @@ model Appointment {
   customerId  String   @db.Uuid
   customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   title       String
+  type        AppointmentType @default(MEETING)
   startTime   DateTime
   endTime     DateTime
   status      String   // 'SCHEDULED', 'COMPLETED', 'CANCELLED'
@@ -453,6 +491,26 @@ model CrmTask {
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ==========================================
+// APPROVAL MANAGEMENT MODELS
+// ==========================================
+
+model ApprovalRequest {
+  id          String   @id @default(uuid()) @db.Uuid
+  requesterId String   @db.Uuid
+  requester   User     @relation("ApprovalsRequested", fields: [requesterId], references: [id], onDelete: Cascade)
+  approverId  String?  @db.Uuid
+  approver    User?    @relation("ApprovalsReviewed", fields: [approverId], references: [id], onDelete: SetNull)
+  type        String   // 'DISCOUNT', 'REFUND', 'LEAD_MERGE'
+  status      String   @default("PENDING") // 'PENDING', 'APPROVED', 'REJECTED'
+  details     Json?    // JSON payload of the request (e.g., amount, reason)
+  notes       String?  // Notes from the approver
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  resolvedAt  DateTime?
 }
 
 // ==========================================
@@ -500,6 +558,7 @@ model CallSession {
   reason         String?
   livekitRoom    String?
   transferHistory Json?
+  leadNotes      LeadNote[]
   holdDuration   Int?          @default(0)
   createdAt      DateTime      @default(now())
 
@@ -537,14 +596,28 @@ model CallRecording {
 }
 
 model CallAnalytics {
-  id             String      @id @default(uuid()) @db.Uuid
-  callSessionId  String      @unique @db.Uuid
-  callSession    CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
-  sentimentScore Float?
-  silenceRatio   Float?
-  talkRatio      Float?
-  summary        String?
-  createdAt      DateTime    @default(now())
+  id                    String      @id @default(uuid()) @db.Uuid
+  callSessionId         String      @unique @db.Uuid
+  callSession           CallSession @relation(fields: [callSessionId], references: [id], onDelete: Cascade)
+  
+  // Speech to Text & Intelligence
+  originalTranscript    String?     @db.Text
+  englishTranslation    String?     @db.Text
+  detectedLanguage      String?
+  
+  // AI Derived Insights
+  summary               String?     @db.Text
+  customerIntent        String?
+  sentiment             String?
+  sentimentScore        Float?
+  actionItems           Json?
+  followUpRecommendation String?    @db.Text
+  
+  // Existing fields
+  silenceRatio          Float?
+  talkRatio             Float?
+  
+  createdAt             DateTime    @default(now())
 }
 
 // ==========================================
@@ -654,6 +727,11 @@ model Lead {
   followups         LeadFollowup[]
   conversionLogs    LeadConversionLog[]
   notifications     LeadNotification[]
+  activities        Activity[]
+  attachments       Attachment[]
+  leadNotes         LeadNote[] @relation("LeadNotes")
+  timelineEvents    ClientTimelineEvent[]
+  reports           LeadReport[]
 }
 
 model LeadFollowup {
@@ -718,4 +796,204 @@ model LeadNotification {
   
   createdAt   DateTime @default(now())
   sentAt      DateTime?
+}
+
+// ==========================================
+// PARAMANTRA CRM PHASE 1 ADDITIONS
+// ==========================================
+
+model Organization {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String
+  gstNumber      String?
+  address        String?
+  city           String?
+  country        String?
+  timezone       String    @default("UTC")
+  businessHours  Json?     // branch open/close settings
+  logoUrl        String?
+  branches       Branch[]
+  users          User[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Branch {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  address        String?
+  createdAt      DateTime     @default(now())
+}
+
+model Role {
+  id              String                 @id @default(uuid()) @db.Uuid
+  name            String                 @unique
+  description     String?
+  permissions     RolePermission[]
+  userAssignments UserRoleAssignment[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+}
+
+model Permission {
+  id             String           @id @default(uuid()) @db.Uuid
+  code           String           @unique // e.g. "Lead.Create", "Lead.Read"
+  category       String           // e.g. "Lead", "Customer"
+  roles          RolePermission[]
+}
+
+model RolePermission {
+  roleId         String     @db.Uuid
+  permissionId   String     @db.Uuid
+  role           Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission     Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRoleAssignment {
+  userId         String @db.Uuid
+  roleId         String @db.Uuid
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenVersion Int      @default(0)
+  deviceInfo   String?
+  ipAddress    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
+model Activity {
+  id             String      @id @default(uuid()) @db.Uuid
+  type           String      // "CALL", "MEETING", "EMAIL", "TASK", "WHATSAPP", "SITE_VISIT"
+  subject        String
+  description    String?
+  status         String      // "PENDING", "COMPLETED", "CANCELLED"
+  dueDate        DateTime?
+  completedAt    DateTime?
+  
+  customerId     String?     @db.Uuid
+  customer       Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  leadId         String?     @db.Uuid
+  lead           Lead?       @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  
+  agentId        String      @db.Uuid
+  agent          Agent       @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  
+  comments       Comment[]
+  attachments    Attachment[]
+  createdAt      DateTime    @default(now())
+}
+
+model Comment {
+  id          String   @id @default(uuid()) @db.Uuid
+  activityId  String   @db.Uuid
+  activity    Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  content     String
+  authorId    String   @db.Uuid
+  createdAt   DateTime @default(now())
+}
+
+model Attachment {
+  id          String   @id @default(uuid()) @db.Uuid
+  filename    String
+  fileUrl     String
+  size        Int?
+  mimeType    String?
+  
+  activityId  String?  @db.Uuid
+  activity    Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  
+  leadId      String?  @db.Uuid
+  lead        Lead?    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+}
+
+model ClientTimelineEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  customerId    String?  @db.Uuid
+  customer      Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  leadId        String?  @db.Uuid
+  lead          Lead?    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  eventType     String   
+  title         String
+  description   String?
+  
+  userId        String?  @db.Uuid 
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  department    String?
+  
+  communication String?  
+  status        String   
+  source        String?  @default("System")
+  
+  metadata      Json?    
+
+  createdAt     DateTime @default(now())
+}
+
+model LeadNote {
+  id          String       @id @default(uuid()) @db.Uuid
+  content     String
+  
+  leadId      String       @db.Uuid
+  lead        Lead         @relation("LeadNotes", fields: [leadId], references: [id], onDelete: Cascade)
+  
+  agentId     String?      @db.Uuid
+  agent       Agent?       @relation("AgentLeadNotes", fields: [agentId], references: [id], onDelete: SetNull)
+  
+  department  String?
+  actionType  String?      @default("Note Added")
+  source      String       @default("System")
+  
+  callId      String?      @db.Uuid
+  call        CallSession? @relation(fields: [callId], references: [id], onDelete: SetNull)
+  
+  meetingId   String?      @db.Uuid
+  
+  isCorrection Boolean     @default(false)
+  correctedNoteId String?  @db.Uuid
+  correctedNote   LeadNote? @relation("NoteCorrections", fields: [correctedNoteId], references: [id])
+  corrections     LeadNote[] @relation("NoteCorrections")
+  
+  attachments LeadNoteAttachment[]
+  
+  createdAt   DateTime     @default(now())
+}
+
+model LeadNoteAttachment {
+  id          String    @id @default(uuid()) @db.Uuid
+  noteId      String    @db.Uuid
+  note        LeadNote  @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  fileName    String
+  fileUrl     String
+  fileType    String    // IMAGE, PDF, VOICE, VIDEO, DOCUMENT
+  fileSize    Int?      // in bytes
+  
+  createdAt   DateTime  @default(now())
+}
+
+model LeadReport {
+  id          String   @id @default(uuid()) @db.Uuid
+  leadId      String   @db.Uuid
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  generatedBy String   @db.Uuid
+  user        User     @relation(fields: [generatedBy], references: [id], onDelete: Cascade)
+  
+  content     Json     // Stores structured report sections
+  
+  createdAt   DateTime @default(now())
 }

@@ -5,11 +5,13 @@ import { TelephonyGateway } from './telephony.gateway';
 import { TelephonyController } from './telephony.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { QueueOrchestrationModule } from '../queue-orchestration/queue-orchestration.module';
+import { TimelineModule } from '../timeline/timeline.module';
+import { AiSpeechService } from './ai-speech.service';
 
 @Module({
-  imports: [PrismaModule, QueueOrchestrationModule],
+  imports: [PrismaModule, QueueOrchestrationModule, TimelineModule],
   controllers: [TelephonyController],
-  providers: [TelephonyService, LivekitService, TelephonyGateway],
-  exports: [TelephonyService, LivekitService],
+  providers: [TelephonyService, LivekitService, TelephonyGateway, AiSpeechService],
+  exports: [TelephonyService, LivekitService, AiSpeechService],
 })
 export class TelephonyModule {}
