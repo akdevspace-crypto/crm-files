@@ -6,20 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AnalyticsModule = void 0;
+exports.ActivitiesModule = void 0;
 const common_1 = require("@nestjs/common");
-const analytics_service_1 = require("./analytics.service");
-const analytics_controller_1 = require("./analytics.controller");
+const activities_service_1 = require("./activities.service");
+const activities_controller_1 = require("./activities.controller");
+const activities_repository_1 = require("./activities.repository");
 const auth_module_1 = require("../auth/auth.module");
-let AnalyticsModule = class AnalyticsModule {
+let ActivitiesModule = class ActivitiesModule {
 };
-exports.AnalyticsModule = AnalyticsModule;
-exports.AnalyticsModule = AnalyticsModule = __decorate([
+exports.ActivitiesModule = ActivitiesModule;
+exports.ActivitiesModule = ActivitiesModule = __decorate([
     (0, common_1.Module)({
         imports: [auth_module_1.AuthModule],
-        controllers: [analytics_controller_1.AnalyticsController],
-        providers: [analytics_service_1.AnalyticsService],
-        exports: [analytics_service_1.AnalyticsService],
+        controllers: [activities_controller_1.ActivitiesController],
+        providers: [activities_service_1.ActivitiesService, activities_repository_1.ActivitiesRepository],
+        exports: [activities_service_1.ActivitiesService],
     })
-], AnalyticsModule);
-//# sourceMappingURL=analytics.module.js.map
+], ActivitiesModule);
+//# sourceMappingURL=activities.module.js.map
