@@ -34,6 +34,9 @@ let TelephonyController = TelephonyController_1 = class TelephonyController {
     async getDashboardCalls() {
         return await this.telephonyService.getDashboardCalls();
     }
+    async getAiSummaries() {
+        return await this.telephonyService.getAiSummaries();
+    }
     async getMyRingingCall(req) {
         const agentId = req.query.agentId;
         if (!agentId)
@@ -56,6 +59,15 @@ let TelephonyController = TelephonyController_1 = class TelephonyController {
                 token,
             },
         };
+    }
+    async getAgentToken(body) {
+        try {
+            const token = await this.livekitService.generateAgentToken(body.roomName || `room_${Date.now()}`, body.participantName || 'Agent');
+            return { token };
+        }
+        catch (e) {
+            return { token: 'mock-token' };
+        }
     }
     async handleIncomingCall(req) {
         this.logger.log(`Received incoming call webhook from Exotel via ${req.method}`);
@@ -156,6 +168,16 @@ let TelephonyController = TelephonyController_1 = class TelephonyController {
         }
         return 'OK';
     }
+    async handleAiBotWebhook(body) {
+        this.logger.log(`Received AI Bot Webhook payload: ${JSON.stringify(body)}`);
+        if (body.leadId) {
+            const genericAgent = await this.telephonyService.getGenericAgent();
+            if (genericAgent) {
+                await this.telephonyService.saveAiBotResults(body.leadId, body, genericAgent.id);
+            }
+        }
+        return { success: true };
+    }
 };
 exports.TelephonyController = TelephonyController;
 __decorate([
@@ -165,12 +187,25 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TelephonyController.prototype, "getDashboardCalls", null);
 __decorate([
+    (0, common_1.Get)('ai-summaries'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], TelephonyController.prototype, "getAiSummaries", null);
+__decorate([
     (0, common_1.Get)('my-ringing-call'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TelephonyController.prototype, "getMyRingingCall", null);
+__decorate([
+    (0, common_1.Post)('agent-token'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TelephonyController.prototype, "getAgentToken", null);
 __decorate([
     (0, common_1.All)('incoming'),
     (0, common_1.Header)('Content-Type', 'text/xml'),
@@ -186,6 +221,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TelephonyController.prototype, "handleCallStatus", null);
+__decorate([
+    (0, common_1.Post)('ai-bot/webhook'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TelephonyController.prototype, "handleAiBotWebhook", null);
 exports.TelephonyController = TelephonyController = TelephonyController_1 = __decorate([
     (0, common_1.Controller)('exotel'),
     __metadata("design:paramtypes", [livekit_service_1.LivekitService,

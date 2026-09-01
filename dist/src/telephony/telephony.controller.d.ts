@@ -18,8 +18,8 @@ export declare class TelephonyController {
             } | null;
         } & {
             id: string;
-            status: import(".prisma/client").$Enums.CallStatus;
             createdAt: Date;
+            status: import(".prisma/client").$Enums.CallStatus;
             customerId: string | null;
             conversationId: string | null;
             callerUserId: string | null;
@@ -40,8 +40,8 @@ export declare class TelephonyController {
             } | null;
         } & {
             id: string;
-            status: import(".prisma/client").$Enums.CallStatus;
             createdAt: Date;
+            status: import(".prisma/client").$Enums.CallStatus;
             customerId: string | null;
             conversationId: string | null;
             callerUserId: string | null;
@@ -56,6 +56,55 @@ export declare class TelephonyController {
             holdDuration: number | null;
         })[];
     }>;
+    getAiSummaries(): Promise<({
+        callSession: {
+            customer: {
+                name: string;
+                phone: string;
+            } | null;
+            participants: {
+                id: string;
+                role: string;
+                joinedAt: Date;
+                customerId: string | null;
+                duration: number | null;
+                callSessionId: string;
+                agentId: string | null;
+                leftAt: Date | null;
+            }[];
+        } & {
+            id: string;
+            createdAt: Date;
+            status: import(".prisma/client").$Enums.CallStatus;
+            customerId: string | null;
+            conversationId: string | null;
+            callerUserId: string | null;
+            calleeUserId: string | null;
+            startedAt: Date | null;
+            endedAt: Date | null;
+            duration: number | null;
+            recordingUrl: string | null;
+            reason: string | null;
+            livekitRoom: string | null;
+            transferHistory: import("@prisma/client/runtime/library").JsonValue | null;
+            holdDuration: number | null;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        callSessionId: string;
+        originalTranscript: string | null;
+        englishTranslation: string | null;
+        detectedLanguage: string | null;
+        summary: string | null;
+        customerIntent: string | null;
+        sentiment: string | null;
+        sentimentScore: number | null;
+        actionItems: import("@prisma/client/runtime/library").JsonValue | null;
+        followUpRecommendation: string | null;
+        silenceRatio: number | null;
+        talkRatio: number | null;
+    })[]>;
     getMyRingingCall(req: Request): Promise<{
         call: null;
     } | {
@@ -68,12 +117,12 @@ export declare class TelephonyController {
             source: string;
             customerContext: {
                 customer: {
-                    name: string;
                     id: string;
-                    phone: string;
+                    name: string;
                     createdAt: Date;
                     updatedAt: Date;
                     email: string | null;
+                    phone: string;
                     emergencyContact: string | null;
                     platform: string | null;
                     platformUserId: string | null;
@@ -91,6 +140,15 @@ export declare class TelephonyController {
             token: string;
         };
     }>;
+    getAgentToken(body: {
+        roomName: string;
+        participantName: string;
+    }): Promise<{
+        token: string;
+    }>;
     handleIncomingCall(req: Request): Promise<string>;
     handleCallStatus(req: Request): Promise<string>;
+    handleAiBotWebhook(body: any): Promise<{
+        success: boolean;
+    }>;
 }

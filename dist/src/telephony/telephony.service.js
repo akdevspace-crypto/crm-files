@@ -18,11 +18,20 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const supabase_js_1 = require("@supabase/supabase-js");
 const node_fetch_1 = __importDefault(require("node-fetch"));
+const timeline_service_1 = require("../timeline/timeline.service");
+const ai_speech_service_1 = require("./ai-speech.service");
+const event_emitter_1 = require("@nestjs/event-emitter");
 let TelephonyService = TelephonyService_1 = class TelephonyService {
     prisma;
+    timelineService;
+    aiSpeechService;
+    eventEmitter;
     logger = new common_1.Logger(TelephonyService_1.name);
-    constructor(prisma) {
+    constructor(prisma, timelineService, aiSpeechService, eventEmitter) {
         this.prisma = prisma;
+        this.timelineService = timelineService;
+        this.aiSpeechService = aiSpeechService;
+        this.eventEmitter = eventEmitter;
     }
     async lookupCustomerContext(phoneNumber) {
         this.logger.log(`Looking up customer context for phone: ${phoneNumber}`);
@@ -143,6 +152,12 @@ let TelephonyService = TelephonyService_1 = class TelephonyService {
                     data: { status: 'AVAILABLE', activeCalls: 0 },
                 });
             }
+            if (duration > 0 || session.participants.length > 0) {
+                this.aiSpeechService.processSpeechIntelligence(session.id).catch(err => {
+                    this.logger.error(`AI Speech processing failed in background: ${err.message}`);
+                });
+            }
+            this.eventEmitter.emit('call.ended', session);
         }
         catch (e) {
             this.logger.error(`Failed to end CallSession: ${e.message}`);
@@ -166,6 +181,23 @@ let TelephonyService = TelephonyService_1 = class TelephonyService {
             },
         });
         return { queuedCalls, missedCalls };
+    }
+    async getAiSummaries() {
+        return await this.prisma.callAnalytics.findMany({
+            where: { summary: { not: null } },
+            orderBy: { createdAt: 'desc' },
+            take: 20,
+            include: {
+                callSession: {
+                    include: {
+                        customer: { select: { name: true, phone: true } },
+                        participants: {
+                            where: { role: 'AGENT' }
+                        }
+                    }
+                }
+            }
+        });
     }
     async getMyRingingCall(agentId) {
         if (!agentId)
@@ -233,10 +265,95 @@ let TelephonyService = TelephonyService_1 = class TelephonyService {
     async dispatchVoiceBot(roomName) {
         this.logger.log(`[AI Voicebot Placeholder] Dispatching AI Voicebot to room: ${roomName}`);
     }
+    async handleOutboundCallRequest(lead) {
+        this.logger.log(`Received automated outbound call request for lead ${lead?.id}`);
+        if (lead) {
+            await this.triggerAiCallBot(lead);
+        }
+    }
+    async triggerAiCallBot(lead) {
+        this.logger.log(`Triggering AI Call Bot for lead ${lead.id}`);
+        const roomName = `ai_bot_${lead.id}_${Date.now()}`;
+        await this.createCallSession(`outbound_ai_${lead.id}`, roomName, undefined, undefined);
+        const livekitSipDomain = '4c0ct02u07s.sip.livekit.cloud';
+        this.logger.log(`Dispatching AI Voicebot SIP trunk: sip:${roomName}@${livekitSipDomain} for lead phone ${lead.phoneNumber}`);
+        await this.prisma.lead.update({
+            where: { id: lead.id },
+            data: { status: 'IN_PROGRESS' },
+        });
+        await this.timelineService.logEvent({
+            leadId: lead.id,
+            eventType: 'AI_BOT_CALL',
+            title: 'AI Bot Triggered',
+            description: `Outbound AI call initiated for ${lead.phoneNumber}`,
+            department: 'AI Automation',
+            communication: 'Outbound Call',
+            status: 'COMPLETED',
+        });
+    }
+    async getGenericAgent() {
+        let agent = await this.prisma.agent.findFirst({
+            where: { status: 'AVAILABLE' }
+        });
+        if (!agent) {
+            agent = await this.prisma.agent.findFirst();
+        }
+        return agent;
+    }
+    async saveAiBotResults(leadId, botData, agentId) {
+        const notes = `AI Bot Summary:
+Requirement: ${botData.requirement || 'N/A'}
+Preferred Service: ${botData.service || 'N/A'}
+Callback Time: ${botData.callbackTime || 'N/A'}
+Transcript: ${botData.transcript || ''}`;
+        await this.prisma.lead.update({
+            where: { id: leadId },
+            data: { notes },
+        });
+        await this.prisma.leadNote.create({
+            data: {
+                leadId,
+                agentId: agentId || null,
+                department: 'AI Bot',
+                content: notes,
+            }
+        });
+        if (agentId) {
+            await this.prisma.crmTask.create({
+                data: {
+                    agentId,
+                    title: `AI Follow-up: ${botData.service || 'Lead'}`,
+                    description: notes,
+                    status: 'TODO',
+                    priority: 'HIGH',
+                }
+            });
+            this.logger.log(`Saved AI results and created follow-up task for lead ${leadId}`);
+        }
+        await this.timelineService.logEvent({
+            leadId: leadId,
+            userId: agentId,
+            eventType: 'FOLLOW_UP',
+            title: 'Follow-up #1 (AI)',
+            description: `AI Extracted Requirement: ${botData.requirement || 'N/A'}, Service: ${botData.service || 'N/A'}, Callback: ${botData.callbackTime || 'N/A'}`,
+            department: 'AI Automation',
+            communication: 'AI Summary',
+            status: 'COMPLETED',
+        });
+    }
 };
 exports.TelephonyService = TelephonyService;
+__decorate([
+    (0, event_emitter_1.OnEvent)('call.outbound.requested'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TelephonyService.prototype, "handleOutboundCallRequest", null);
 exports.TelephonyService = TelephonyService = TelephonyService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        timeline_service_1.TimelineService,
+        ai_speech_service_1.AiSpeechService,
+        event_emitter_1.EventEmitter2])
 ], TelephonyService);
 //# sourceMappingURL=telephony.service.js.map

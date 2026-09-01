@@ -14,15 +14,17 @@ const telephony_gateway_1 = require("./telephony.gateway");
 const telephony_controller_1 = require("./telephony.controller");
 const prisma_module_1 = require("../prisma/prisma.module");
 const queue_orchestration_module_1 = require("../queue-orchestration/queue-orchestration.module");
+const timeline_module_1 = require("../timeline/timeline.module");
+const ai_speech_service_1 = require("./ai-speech.service");
 let TelephonyModule = class TelephonyModule {
 };
 exports.TelephonyModule = TelephonyModule;
 exports.TelephonyModule = TelephonyModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, queue_orchestration_module_1.QueueOrchestrationModule],
+        imports: [prisma_module_1.PrismaModule, queue_orchestration_module_1.QueueOrchestrationModule, timeline_module_1.TimelineModule],
         controllers: [telephony_controller_1.TelephonyController],
-        providers: [telephony_service_1.TelephonyService, livekit_service_1.LivekitService, telephony_gateway_1.TelephonyGateway],
-        exports: [telephony_service_1.TelephonyService, livekit_service_1.LivekitService],
+        providers: [telephony_service_1.TelephonyService, livekit_service_1.LivekitService, telephony_gateway_1.TelephonyGateway, ai_speech_service_1.AiSpeechService],
+        exports: [telephony_service_1.TelephonyService, livekit_service_1.LivekitService, ai_speech_service_1.AiSpeechService],
     })
 ], TelephonyModule);
 //# sourceMappingURL=telephony.module.js.map
